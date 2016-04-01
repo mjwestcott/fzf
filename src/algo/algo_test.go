@@ -51,13 +51,8 @@ func TestExactMatchNaive(t *testing.T) {
 }
 
 func TestExactMatchNaiveBackward(t *testing.T) {
-<<<<<<< 8d6e13bf94234addd3801f25de7d966d32d53133
 	assertMatch(t, ExactMatchNaive, false, true, "foobar foob", "oo", 1, 3, 0)
 	assertMatch(t, ExactMatchNaive, false, false, "foobar foob", "oo", 8, 10, 0)
-=======
-	assertMatch(t, ExactMatchNaive, false, true, "foobar foob", "oo", 1, 3, 0)
-	assertMatch(t, ExactMatchNaive, false, false, "foobar foob", "oo", 8, 10, 0)
->>>>>>> Experimental word-boundary ranking algorithm
 }
 
 func TestPrefixMatch(t *testing.T) {
