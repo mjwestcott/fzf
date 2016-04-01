@@ -3,7 +3,7 @@ package fzf
 import (
 	"math"
 
-	"github.com/junegunn/fzf/src/curses"
+	"github.com/mjwestcott/fzf/src/curses"
 )
 
 // Offset holds three 32-bit integers denoting the offsets of a matched substring
@@ -21,6 +21,7 @@ type Item struct {
 	origText    *[]rune
 	transformed []Token
 	offsets     []Offset
+	penalty     int32
 	colors      []ansiOffset
 	rank        [5]int32
 }
@@ -81,7 +82,8 @@ func (item *Item) Rank(cache bool) [5]int32 {
 		var val int32
 		switch criterion {
 		case byMatchLen:
-			val = int32(matchlen)
+			// A simple and effective way to incorporate the penalty.
+			val = int32(matchlen) + item.penalty
 		case byLength:
 			// It is guaranteed that .transformed in not null in normal execution
 			if item.transformed != nil {

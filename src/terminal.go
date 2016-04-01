@@ -13,10 +13,9 @@ import (
 	"syscall"
 	"time"
 
-	C "github.com/junegunn/fzf/src/curses"
-	"github.com/junegunn/fzf/src/util"
-
 	"github.com/junegunn/go-runewidth"
+	C "github.com/mjwestcott/fzf/src/curses"
+	"github.com/mjwestcott/fzf/src/util"
 )
 
 // Terminal represents terminal input/output

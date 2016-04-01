@@ -7,9 +7,8 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"github.com/junegunn/fzf/src/curses"
-
 	"github.com/junegunn/go-shellwords"
+	"github.com/mjwestcott/fzf/src/curses"
 )
 
 const usage = `usage: fzf [options]

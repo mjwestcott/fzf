@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/junegunn/fzf/src/algo"
+	"github.com/mjwestcott/fzf/src/algo"
 )
 
 func TestParseTermsExtended(t *testing.T) {
@@ -70,10 +70,10 @@ func TestExact(t *testing.T) {
 	clearPatternCache()
 	pattern := BuildPattern(true, true, CaseSmart, true,
 		[]Range{}, Delimiter{}, []rune("'abc"))
-	sidx, eidx := algo.ExactMatchNaive(
+	res := algo.ExactMatchNaive(
 		pattern.caseSensitive, pattern.forward, []rune("aabbcc abc"), pattern.termSets[0][0].text)
-	if sidx != 7 || eidx != 10 {
-		t.Errorf("%s / %d / %d", pattern.termSets, sidx, eidx)
+	if res.Start != 7 || res.End != 10 {
+		t.Errorf("%s / %d / %d", pattern.termSets, res.Start, res.End)
 	}
 }
 
@@ -83,10 +83,10 @@ func TestEqual(t *testing.T) {
 	pattern := BuildPattern(true, true, CaseSmart, true, []Range{}, Delimiter{}, []rune("^AbC$"))
 
 	match := func(str string, sidxExpected int, eidxExpected int) {
-		sidx, eidx := algo.EqualMatch(
+		res := algo.EqualMatch(
 			pattern.caseSensitive, pattern.forward, []rune(str), pattern.termSets[0][0].text)
-		if sidx != sidxExpected || eidx != eidxExpected {
-			t.Errorf("%s / %d / %d", pattern.termSets, sidx, eidx)
+		if res.Start != sidxExpected || res.End != eidxExpected {
+			t.Errorf("%s / %d / %d", pattern.termSets, res.Start, res.End)
 		}
 	}
 	match("ABC", -1, -1)
