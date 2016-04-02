@@ -331,12 +331,12 @@ func (p *Pattern) extendedMatch(item *Item) ([]Offset, int32) {
 		var penalty int32
 		for _, term := range termSet {
 			pfun := p.procFun[term.typ]
-			o, p := p.iter(pfun, input, term.caseSensitive, p.forward, term.text)
-			if sidx := o[0]; sidx >= 0 {
+			off, pen := p.iter(pfun, input, term.caseSensitive, p.forward, term.text)
+			if sidx := off[0]; sidx >= 0 {
 				if term.inv {
 					continue
 				}
-				offset, penalty = &o, p
+				offset, penalty = &off, pen
 				break
 			} else if term.inv {
 				offset, penalty = &Offset{0, 0, 0}, 0
