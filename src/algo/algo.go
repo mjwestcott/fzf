@@ -48,6 +48,14 @@ type Result struct {
 	//     penalties   2       3   1      100            5000
 	//     total = 12
 	//
+	// CamelCase is also treated as a word boundary.
+	//
+	//     input    "I <3 AbstractSingletonProxyFactoryBean"
+	//     values    1--1-123456781234567891234512345671234
+	//     pattern        abs              p    f      b
+	//     penalties      100              1    1      1
+	//     total = 4
+	//
 	// We can then decide how to use that penalty when ranking items. One
 	// simple and effective idea is to rank according to matchlen + penalty.
 	Penalty int32
@@ -126,24 +134,20 @@ func FuzzyMatch(caseSensitive bool, forward bool, runes []rune, pattern []rune) 
 		// Calculate the penalty. This can't be done at the same time as the
 		// pattern scan above because 'forward' may be false.
 		var fromBoundary int32
-		var totalPenalty int32
+		var penalty int32
 		var consecutive bool
 		var pidx int
 
-		// We can think about how to start closer to sidx.
 		for index := 0; index < eidx; index++ {
-			var penalty int32
-
-			// Calculate current rune penalty.
 			char := runes[index]
-			if unicode.IsLetter(char) || unicode.IsNumber(char) {
+			if index != 0 && unicode.IsLower(runes[index-1]) && unicode.IsUpper(char) {
+				fromBoundary = 1
+			} else if unicode.IsLetter(char) || unicode.IsNumber(char) {
 				fromBoundary++
-				penalty = fromBoundary
 			} else {
 				fromBoundary = 0
 			}
 
-			// Calculate totalPenalty of the match.
 			if index >= sidx {
 				if !caseSensitive {
 					if char >= 'A' && char <= 'Z' {
@@ -155,7 +159,7 @@ func FuzzyMatch(caseSensitive bool, forward bool, runes []rune, pattern []rune) 
 				pchar := pattern[pidx]
 				if pchar == char {
 					if !consecutive {
-						totalPenalty += penalty
+						penalty += fromBoundary
 					}
 					if pidx++; pidx == lenPattern {
 						break
@@ -168,9 +172,9 @@ func FuzzyMatch(caseSensitive bool, forward bool, runes []rune, pattern []rune) 
 		}
 
 		if forward {
-			return &Result{sidx, eidx, totalPenalty}
+			return &Result{sidx, eidx, penalty}
 		}
-		return &Result{lenRunes - eidx, lenRunes - sidx, totalPenalty}
+		return &Result{lenRunes - eidx, lenRunes - sidx, penalty}
 	}
 	return &Result{-1, -1, 0}
 }
