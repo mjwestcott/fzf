@@ -58,9 +58,9 @@ type Result struct {
 }
 
 // FuzzyMatch performs fuzzy-match
-func FuzzyMatch(caseSensitive bool, forward bool, runes []rune, pattern []rune) *Result {
+func FuzzyMatch(caseSensitive bool, forward bool, runes []rune, pattern []rune) Result {
 	if len(pattern) == 0 {
-		return &Result{0, 0, 0}
+		return Result{0, 0, 0}
 	}
 
 	// 0. (FIXME) How to find the shortest match?
@@ -174,9 +174,9 @@ func FuzzyMatch(caseSensitive bool, forward bool, runes []rune, pattern []rune) 
 				}
 			}
 		}
-		return &Result{int32(sidx), int32(eidx), penalty}
+		return Result{int32(sidx), int32(eidx), penalty}
 	}
-	return &Result{-1, -1, 0}
+	return Result{-1, -1, 0}
 }
 
 // ExactMatchNaive is a basic string searching algorithm that handles case
@@ -186,17 +186,17 @@ func FuzzyMatch(caseSensitive bool, forward bool, runes []rune, pattern []rune) 
 //
 // We might try to implement better algorithms in the future:
 // http://en.wikipedia.org/wiki/String_searching_algorithm
-func ExactMatchNaive(caseSensitive bool, forward bool, runes []rune, pattern []rune) *Result {
+func ExactMatchNaive(caseSensitive bool, forward bool, runes []rune, pattern []rune) Result {
 	// Note: ExactMatchNaive always return a zero penalty.
 	if len(pattern) == 0 {
-		return &Result{0, 0, 0}
+		return Result{0, 0, 0}
 	}
 
 	lenRunes := len(runes)
 	lenPattern := len(pattern)
 
 	if lenRunes < lenPattern {
-		return &Result{-1, -1, 0}
+		return Result{-1, -1, 0}
 	}
 
 	pidx := 0
@@ -214,13 +214,13 @@ func ExactMatchNaive(caseSensitive bool, forward bool, runes []rune, pattern []r
 			pidx++
 			if pidx == lenPattern {
 				if forward {
-					return &Result{
+					return Result{
 						int32(index - lenPattern + 1),
 						int32(index + 1),
 						0,
 					}
 				}
-				return &Result{
+				return Result{
 					int32(lenRunes - (index + 1)),
 					int32(lenRunes - (index - lenPattern + 1)),
 					0,
@@ -231,14 +231,14 @@ func ExactMatchNaive(caseSensitive bool, forward bool, runes []rune, pattern []r
 			pidx = 0
 		}
 	}
-	return &Result{-1, -1, 0}
+	return Result{-1, -1, 0}
 }
 
 // PrefixMatch performs prefix-match
-func PrefixMatch(caseSensitive bool, forward bool, runes []rune, pattern []rune) *Result {
+func PrefixMatch(caseSensitive bool, forward bool, runes []rune, pattern []rune) Result {
 	// Note: PrefixMatch always return a zero penalty.
 	if len(runes) < len(pattern) {
-		return &Result{-1, -1, 0}
+		return Result{-1, -1, 0}
 	}
 
 	for index, r := range pattern {
@@ -247,20 +247,20 @@ func PrefixMatch(caseSensitive bool, forward bool, runes []rune, pattern []rune)
 			char = unicode.ToLower(char)
 		}
 		if char != r {
-			return &Result{-1, -1, 0}
+			return Result{-1, -1, 0}
 		}
 	}
-	return &Result{0, int32(len(pattern)), 0}
+	return Result{0, int32(len(pattern)), 0}
 }
 
 // SuffixMatch performs suffix-match
-func SuffixMatch(caseSensitive bool, forward bool, input []rune, pattern []rune) *Result {
+func SuffixMatch(caseSensitive bool, forward bool, input []rune, pattern []rune) Result {
 	// Note: SuffixMatch always return a zero penalty.
 	runes := util.TrimRight(input)
 	trimmedLen := len(runes)
 	diff := trimmedLen - len(pattern)
 	if diff < 0 {
-		return &Result{-1, -1, 0}
+		return Result{-1, -1, 0}
 	}
 
 	for index, r := range pattern {
@@ -270,24 +270,24 @@ func SuffixMatch(caseSensitive bool, forward bool, input []rune, pattern []rune)
 			char = unicode.ToLower(char)
 		}
 		if char != r {
-			return &Result{-1, -1, 0}
+			return Result{-1, -1, 0}
 		}
 	}
-	return &Result{int32(trimmedLen - len(pattern)), int32(trimmedLen), 0}
+	return Result{int32(trimmedLen - len(pattern)), int32(trimmedLen), 0}
 }
 
 // EqualMatch performs equal-match
-func EqualMatch(caseSensitive bool, forward bool, runes []rune, pattern []rune) *Result {
+func EqualMatch(caseSensitive bool, forward bool, runes []rune, pattern []rune) Result {
 	// Note: EqualMatch always return a zero penalty.
 	if len(runes) != len(pattern) {
-		return &Result{-1, -1, 0}
+		return Result{-1, -1, 0}
 	}
 	runesStr := string(runes)
 	if !caseSensitive {
 		runesStr = strings.ToLower(runesStr)
 	}
 	if runesStr == string(pattern) {
-		return &Result{0, int32(len(pattern)), 0}
+		return Result{0, int32(len(pattern)), 0}
 	}
-	return &Result{-1, -1, 0}
+	return Result{-1, -1, 0}
 }

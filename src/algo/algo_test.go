@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func assertMatch(t *testing.T, fun func(bool, bool, []rune, []rune) *Result, caseSensitive, forward bool, input, pattern string, sidx, eidx, penalty int32) {
+func assertMatch(t *testing.T, fun func(bool, bool, []rune, []rune) Result, caseSensitive, forward bool, input, pattern string, sidx, eidx, penalty int32) {
 	if !caseSensitive {
 		pattern = strings.ToLower(pattern)
 	}
