@@ -39,11 +39,20 @@ type Result struct {
 	//     penalties        10     10        100
 	//     total = 3
 	//
-	// In fact that is a simplification. There may be multiple matches
-	// within the same word. See the example below. We don't want the
-	// matching "nal" pattern to suffer a penalty as though it started
-	// matching a word as position 5, since it comes after another match.
-	// Therefore, we reset the penalty every time a match is made.
+	// Now an example that should be heavily penalized because many of the
+	// matches occur in the middle of words:
+	//
+	//     input    "/usr/jg/repos/go/src/github.com/junegunn"
+	//     values    -123-12-12345-12-123-123456-123-12345678
+	//     pattern     s       p   g      git            gunn
+	//     penalties   2       3   1      100            5000
+	//     total = 12
+	//
+	// Those are simple examples, but what if there are multiple matches in
+	// the same word? See the example below. We don't want the matching
+	// "nal" pattern to suffer a penalty as though it started matching a
+	// word as position 5, since it comes after another match. Therefore,
+	// we reset the penalty every time a match is made.
 	//
 	//     input    "Godel, Escher, Bach: an Eternal Golden Braid"
 	//     pattern                  b        et  nal
