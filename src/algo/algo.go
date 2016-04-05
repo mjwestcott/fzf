@@ -133,6 +133,9 @@ func FuzzyMatch(caseSensitive bool, forward bool, runes []rune, pattern []rune) 
 
 		// Calculate the penalty. This can't be done at the same time as the
 		// pattern scan above because 'forward' may be false.
+		if !forward {
+			sidx, eidx = lenRunes-eidx, lenRunes-sidx
+		}
 		var fromBoundary int32
 		var penalty int32
 		var consecutive bool
