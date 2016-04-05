@@ -370,12 +370,11 @@ func (p *Pattern) prepareInput(item *Item) []Token {
 func (p *Pattern) iter(pfun func(bool, bool, []rune, []rune) *algo.Result,
 	tokens []Token, caseSensitive bool, forward bool, pattern []rune) (Offset, int32) {
 	for _, part := range tokens {
-		prefixLength := part.prefixLength
+		prefixLength := int32(part.prefixLength)
 		if res := pfun(caseSensitive, forward, part.text, pattern); res.Start >= 0 {
 			sidx := res.Start + prefixLength
 			eidx := res.End + prefixLength
-			tlen := part.trimLength
-			return Offset{int32(sidx), int32(eidx), int32(tlen)}, res.Penalty
+			return Offset{sidx, eidx, int32(part.trimLength)}, res.Penalty
 		}
 	}
 	// TODO: math.MaxUint16

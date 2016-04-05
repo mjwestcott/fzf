@@ -82,7 +82,7 @@ func TestEqual(t *testing.T) {
 	clearPatternCache()
 	pattern := BuildPattern(true, true, CaseSmart, true, []Range{}, Delimiter{}, []rune("^AbC$"))
 
-	match := func(str string, sidxExpected int, eidxExpected int) {
+	match := func(str string, sidxExpected, eidxExpected int32) {
 		res := algo.EqualMatch(
 			pattern.caseSensitive, pattern.forward, []rune(str), pattern.termSets[0][0].text)
 		if res.Start != sidxExpected || res.End != eidxExpected {

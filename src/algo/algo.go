@@ -24,8 +24,8 @@ func runeAt(runes []rune, index int, max int, forward bool) rune {
 
 // Result conatins the results of running a match function.
 type Result struct {
-	Start int
-	End   int
+	Start int32
+	End   int32
 
 	// Every result is assigned a penalty based on the distances of the
 	// matching runes from the beginning of its containing word. The basic
@@ -174,7 +174,7 @@ func FuzzyMatch(caseSensitive bool, forward bool, runes []rune, pattern []rune) 
 				}
 			}
 		}
-		return &Result{sidx, eidx, penalty}
+		return &Result{int32(sidx), int32(eidx), penalty}
 	}
 	return &Result{-1, -1, 0}
 }
@@ -214,9 +214,17 @@ func ExactMatchNaive(caseSensitive bool, forward bool, runes []rune, pattern []r
 			pidx++
 			if pidx == lenPattern {
 				if forward {
-					return &Result{index - lenPattern + 1, index + 1, 0}
+					return &Result{
+						int32(index - lenPattern + 1),
+						int32(index + 1),
+						0,
+					}
 				}
-				return &Result{lenRunes - (index + 1), lenRunes - (index - lenPattern + 1), 0}
+				return &Result{
+					int32(lenRunes - (index + 1)),
+					int32(lenRunes - (index - lenPattern + 1)),
+					0,
+				}
 			}
 		} else {
 			index -= pidx
@@ -242,7 +250,7 @@ func PrefixMatch(caseSensitive bool, forward bool, runes []rune, pattern []rune)
 			return &Result{-1, -1, 0}
 		}
 	}
-	return &Result{0, len(pattern), 0}
+	return &Result{0, int32(len(pattern)), 0}
 }
 
 // SuffixMatch performs suffix-match
@@ -265,7 +273,7 @@ func SuffixMatch(caseSensitive bool, forward bool, input []rune, pattern []rune)
 			return &Result{-1, -1, 0}
 		}
 	}
-	return &Result{trimmedLen - len(pattern), trimmedLen, 0}
+	return &Result{int32(trimmedLen - len(pattern)), int32(trimmedLen), 0}
 }
 
 // EqualMatch performs equal-match
@@ -279,7 +287,7 @@ func EqualMatch(caseSensitive bool, forward bool, runes []rune, pattern []rune) 
 		runesStr = strings.ToLower(runesStr)
 	}
 	if runesStr == string(pattern) {
-		return &Result{0, len(pattern), 0}
+		return &Result{0, int32(len(pattern)), 0}
 	}
 	return &Result{-1, -1, 0}
 }
