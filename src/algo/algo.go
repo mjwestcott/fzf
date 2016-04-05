@@ -47,9 +47,9 @@ type Result struct {
 	//
 	//     input    "Godel, Escher, Bach: an Eternal Golden Braid"
 	//     pattern                  b        et  nal
-	//     penalties                1        10  200
+	//     penalties                1        10  300
 	//
-	// The beginning of "nal" receives a penatly of 2 because it is 2
+	// The beginning of "nal" receives a penatly of 3 because it is 3
 	// characters away from the last match in its word.
 	//
 	// We can then decide how to use that penalty when ranking items. One
