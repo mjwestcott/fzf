@@ -30,8 +30,8 @@ type Result struct {
 	// Every result is assigned a penalty based on the distances of the
 	// matching runes from the beginning of its containing word. The basic
 	// idea is to assign values to each rune in the input text. Then,
-	// add up those values which are matched by the pattern. The only nuance
-	// is that consecutive matches have no penalty.
+	// add up those values which are matched by the pattern. Consecutive
+	// matches have no penalty.
 	//
 	//     input    "Hello, world! This is a test."
 	//     values    12345--12345--1234-12-1-1234-
@@ -39,22 +39,18 @@ type Result struct {
 	//     penalties        10     10        100
 	//     total = 3
 	//
-	// Now an example that should be heavily penalized because many of the
-	// matches occur in the middle of words:
+	// In fact that is a simplification. There may be multiple matches
+	// within the same word. See the example below. We don't want the
+	// matching "nal" pattern to suffer a penalty as though it started
+	// matching a word as position 5, since it comes after another match.
+	// Therefore, we reset the penalty every time a match is made.
 	//
-	//     input    "/usr/jg/repos/go/src/github.com/junegunn"
-	//     values    -123-12-12345-12-123-123456-123-12345678
-	//     pattern     s       p   g      git            gunn
-	//     penalties   2       3   1      100            5000
-	//     total = 12
+	//     input    "Godel, Escher, Bach: an Eternal Golden Braid"
+	//     pattern                  b        et  nal
+	//     penalties                1        10  200
 	//
-	// CamelCase is also treated as a word boundary.
-	//
-	//     input    "I <3 AbstractSingletonProxyFactoryBean"
-	//     values    1--1-123456781234567891234512345671234
-	//     pattern        abs              p    f      b
-	//     penalties      100              1    1      1
-	//     total = 4
+	// The beginning of "nal" receives a penatly of 2 because it is 2
+	// characters away from the last match in its word.
 	//
 	// We can then decide how to use that penalty when ranking items. One
 	// simple and effective idea is to rank according to matchlen + penalty.
@@ -168,16 +164,17 @@ func FuzzyMatch(caseSensitive bool, forward bool, runes []rune, pattern []rune) 
 						break
 					}
 					consecutive = true
+
+					// Reset the boundary penalty when we've made a match in this word.
+					// This makes the results more intuitive when there are multiple
+					// matches within the same word.
+					fromBoundary = 0
 				} else {
 					consecutive = false
 				}
 			}
 		}
-
-		if forward {
-			return &Result{sidx, eidx, penalty}
-		}
-		return &Result{lenRunes - eidx, lenRunes - sidx, penalty}
+		return &Result{sidx, eidx, penalty}
 	}
 	return &Result{-1, -1, 0}
 }

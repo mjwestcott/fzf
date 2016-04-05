@@ -22,14 +22,14 @@ func assertMatch(t *testing.T, fun func(bool, bool, []rune, []rune) *Result, cas
 }
 
 func TestFuzzyMatch(t *testing.T) {
-	assertMatch(t, FuzzyMatch, false, true, "fooBarbaz", "oBZ", 2, 9, 9)
+	assertMatch(t, FuzzyMatch, false, true, "fooBarbaz", "oBZ", 2, 9, 8)
 	assertMatch(t, FuzzyMatch, false, true, "foo bar baz", "fbb", 0, 9, 3)
 	assertMatch(t, FuzzyMatch, false, true, "foo/bar/baz", "fbb", 0, 9, 3)
 	assertMatch(t, FuzzyMatch, false, true, "fooBarBaz", "fbb", 0, 7, 3)
-	assertMatch(t, FuzzyMatch, false, true, "foo barbaz", "fbb", 0, 8, 6)
+	assertMatch(t, FuzzyMatch, false, true, "foo barbaz", "fbb", 0, 8, 5)
 	assertMatch(t, FuzzyMatch, false, true, "fooBar Baz", "foob", 0, 4, 1)
 	assertMatch(t, FuzzyMatch, true, true, "fooBarbaz", "oBZ", -1, -1, 0)
-	assertMatch(t, FuzzyMatch, true, true, "fooBarbaz", "oBz", 2, 9, 9)
+	assertMatch(t, FuzzyMatch, true, true, "fooBarbaz", "oBz", 2, 9, 8)
 	assertMatch(t, FuzzyMatch, true, true, "Foo Bar Baz", "fbb", -1, -1, 0)
 	assertMatch(t, FuzzyMatch, true, true, "Foo/Bar/Baz", "FBB", 0, 9, 3)
 	assertMatch(t, FuzzyMatch, true, true, "FooBarBaz", "FBB", 0, 7, 3)
@@ -39,7 +39,7 @@ func TestFuzzyMatch(t *testing.T) {
 }
 
 func TestFuzzyMatchBackward(t *testing.T) {
-	assertMatch(t, FuzzyMatch, false, true, "foobar fb", "fb", 0, 4, 5)
+	assertMatch(t, FuzzyMatch, false, true, "foobar fb", "fb", 0, 4, 4)
 	assertMatch(t, FuzzyMatch, false, false, "foobar fb", "fb", 7, 9, 1)
 }
 
