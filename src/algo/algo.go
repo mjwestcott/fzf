@@ -49,7 +49,7 @@ type Result struct {
 	//     pattern                  b        et  nal
 	//     penalties                1        10  300
 	//
-	// The beginning of "nal" receives a penatly of 3 because it is 3
+	// The beginning of "nal" receives a penalty of 3 because it is 3
 	// characters away from the last match in its word.
 	//
 	// We can then decide how to use that penalty when ranking items. One
