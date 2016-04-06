@@ -22,7 +22,7 @@ func runeAt(runes []rune, index int, max int, forward bool) rune {
 	return runes[max-index-1]
 }
 
-// Result conatins the results of running a match function.
+// Result contains the results of running a match function.
 type Result struct {
 	Start int32
 	End   int32
